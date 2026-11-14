@@ -56,7 +56,7 @@
       <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
     </section>
     <section class="panel" id="engineCheck">
-      <div class="section-heading"><div><p class="eyebrow">04 / VOCOLOCO MOTORU</p><h2>Cihaz uyumluluğu</h2></div><span class="mic-icon">⚙️</span></div>
+      <div class="section-heading"><div><p class="eyebrow">04 / TEKNİK UYUMLULUK</p><h2>Cihaz uyumluluğu</h2></div><span class="mic-icon">⚙️</span></div>
       <p class="muted">Önce iPhone'un WebGPU desteğini ve kullanılabilir depolama alanını kontrol ediyoruz. Bu kontrol model indirmez ve ses arşivine dokunmaz.</p>
       <button class="button primary" id="checkEngineButton" type="button">Cihazımı kontrol et</button>
       <div class="record-status" id="engineCheckStatus" aria-live="polite">Henüz kontrol yapılmadı.</div>
@@ -86,6 +86,15 @@
       <ol id="engineChunkPreview" class="empty"></ol>
       <p class="small-note">Bu ön hazırlık ses üretmez. Gerçek ses için Halim AI Engine model çalışma zamanı ve model ağırlıkları ayrıca tamamlanmalıdır.</p>
     </section>
+    <section class="panel" id="halimVoiceProfile">
+      <div class="section-heading"><div><p class="eyebrow">08 / HALIM SES KLONU</p><h2>Benim sesimle oku</h2></div><span class="mic-icon">🎙️</span></div>
+      <p class="muted">Metin arşivindeki içerikler yalnızca Halim ses profiliyle, Türkçe olarak seslendirilecek. Bu alan klonlama için kendi ses referansını hazırlar.</p>
+      <label class="field-label" for="halimVoiceSample">Kendi WAV ses örneğin</label>
+      <select id="halimVoiceSample"><option value="">WAV ses örneği seç</option></select>
+      <button class="button primary" id="prepareHalimVoice" type="button" disabled>Halim ses referansını kaydet</button>
+      <div class="record-status" id="halimVoiceProfileStatus" aria-live="polite">Profil: Halim · Dil: Türkçe (tr-TR) · Klonlama encoder modeli henüz bağlanmadı.</div>
+      <p class="small-note">Bu adım ses örneğini ayrı bir profil alanında saklar; gerçek ses klonlama, kendi encoder modelimiz tamamlandığında etkinleşir.</p>
+    </section>
     <section class="panel future-panel" id="speechStudio">
       <div class="section-heading"><div><p class="eyebrow">06 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
       <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
@@ -112,6 +121,7 @@
     })();
   </script>\n  <script type="module" src="./engine-check-ui.js"></script>
   <script type="module" src="./text-archive.js"></script>
-  <script type="module" src="./engine-pipeline-ui.js"></script>\n  <script src="./app.js"></script>
+  <script type="module" src="./engine-pipeline-ui.js"></script>
+  <script type="module" src="./voice-profile.js"></script>\n  <script src="./app.js"></script>
 </body>
 </html>
