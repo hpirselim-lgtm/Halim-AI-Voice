@@ -78,6 +78,14 @@
       <div class="record-status" id="textArchiveStatus" aria-live="polite">Metinler bu cihazda saklanır; mevcut ses kayıtlarına dokunulmaz.</div>
       <div id="savedTextList"></div>
     </section>
+    <section class="panel" id="halimEnginePanel">
+      <div class="section-heading"><div><p class="eyebrow">07 / HALIM AI ENGINE</p><h2>Kendi motorumuz</h2></div><span class="mic-icon">🧠</span></div>
+      <p class="muted">Metinleri cümle bütünlüğüyle parçalayan, parçaları sırayla üreten ve sesleri birleştiren kendi üretim çekirdeğimiz. Bu aşamada gerçek model çıkarımı henüz yüklenmedi.</p>
+      <button class="button primary" id="prepareEngineTextButton" type="button">Metni üretim akışına hazırla</button>
+      <div class="record-status" id="halimEngineStatus" aria-live="polite">Motor çekirdeği hazır; yerel ses modeli bağlantısı bekleniyor.</div>
+      <ol id="engineChunkPreview" class="empty"></ol>
+      <p class="small-note">Bu ön hazırlık ses üretmez. Gerçek ses için Halim AI Engine model çalışma zamanı ve model ağırlıkları ayrıca tamamlanmalıdır.</p>
+    </section>
     <section class="panel future-panel" id="speechStudio">
       <div class="section-heading"><div><p class="eyebrow">06 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
       <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
@@ -103,6 +111,7 @@
       }
     })();
   </script>\n  <script type="module" src="./engine-check-ui.js"></script>
-  <script type="module" src="./text-archive.js"></script>\n  <script src="./app.js"></script>
+  <script type="module" src="./text-archive.js"></script>
+  <script type="module" src="./engine-pipeline-ui.js"></script>\n  <script src="./app.js"></script>
 </body>
 </html>
