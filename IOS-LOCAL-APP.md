@@ -58,5 +58,9 @@ Model ağırlıkları ilk kullanımda indirilir. İndirme tamamlandıktan sonra 
 - [ ] Türkçe ses kalitesi test edildi.
 - [ ] iPhone 14 Pro Max performansı test edildi.
 - [ ] Halim AI Voice markalı iOS arayüzü oluşturuldu.
-- [ ] CI derlemesi başarılı oldu.
+- [x] Upstream Chatterbox Core ML demo uygulaması, GitHub Actions macOS 26 üzerinde imzasız iOS derlemesinden başarıyla geçti (run `43615556093`). Bu yalnızca upstream demo derlemesidir; Halim AI Voice'e özel Türkçe arayüz henüz eklenmedi.
 - [ ] iPhone'a yükleme ve çevrimdışı test tamamlandı.
+
+## CI derleme notu
+
+14 Kasım 2026 tarihinde `macos-26` GitHub Actions işinde upstream kaynak kodu sabitlenmiş commit'ten indirildi, Swift paket bağımlılıkları çözüldü ve `xcodebuild ... CODE_SIGNING_ALLOWED=NO build` adımı başarılı tamamlandı. İşlem sonucu: [GitHub Actions run 43615556093](https://github.com/hpirselim-lgtm/Halim-AI-Voice/actions/runs/43615556093). Derleme çıktısı artefakt olarak saklanmadı; dolayısıyla bu işlem iPhone'a yüklenebilir IPA üretildiği anlamına gelmez.
