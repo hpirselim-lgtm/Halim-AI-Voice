@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - '.github/workflows/ios-build.yml'
+      - 'scripts/ios/**'
 
 permissions:
   contents: read
