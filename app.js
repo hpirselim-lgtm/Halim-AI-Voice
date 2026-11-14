@@ -369,6 +369,7 @@ const synthesizeButton = $("synthesizeButton");
 const deleteServerVoiceButton = $("deleteServerVoiceButton");
 const serverVoiceSource = $("serverVoiceSource");
 let serverToken = sessionStorage.getItem("halimVoiceToken") || "";
+let serverVoiceUploaded = false;
 
 function getServerUrl() {
   const value = (serverUrlInput.value || localStorage.getItem("halimVoiceServerUrl") || "").trim();
@@ -421,8 +422,15 @@ async function serverFetch(path, options = {}) {
 function updateServerControls() {
   const connected = Boolean(serverToken);
   uploadVoiceButton.disabled = !connected || !serverVoiceSource.value;
-  synthesizeButton.disabled = !connected;
-  deleteServerVoiceButton.disabled = !connected;
+  synthesizeButton.disabled = !connected || !serverVoiceUploaded;
+  deleteServerVoiceButton.disabled = !connected || !serverVoiceUploaded;
+}
+async function refreshServerStatus() {
+  const response = await serverFetch("/api/status");
+  const data = await response.json();
+  serverVoiceUploaded = Boolean(data.voice_uploaded);
+  updateServerControls();
+  return data;
 }
 async function connectVoiceServer() {
   const base = getServerUrl();
@@ -450,8 +458,8 @@ async function connectVoiceServer() {
     sessionStorage.setItem("halimVoiceToken", serverToken);
     $("serverPassword").value = "";
     await serverFetch("/health");
-    updateServerControls();
-    setServerStatus("Bağlantı kuruldu. Şimdi 5–10 saniyelik WAV örneğini gönderebilirsin.");
+    const state = await refreshServerStatus();
+    setServerStatus(state.voice_uploaded ? "Bağlantı kuruldu. Sunucuda ses örneğin kayıtlı; metin yazıp üretebilirsin." : "Bağlantı kuruldu. Şimdi 5–10 saniyelik WAV örneğini gönderebilirsin.");
   } catch (error) {
     setServerStatus("Bağlantı kurulamadı: " + error.message);
   } finally { serverConnectButton.disabled = false; }
@@ -467,9 +475,9 @@ async function uploadVoiceToServer() {
     form.append("file", item.blob, safeFileBase(item.name) + ".wav");
     const response = await serverFetch("/api/voice", {method:"POST", body:form});
     const data = await response.json();
+    serverVoiceUploaded = true;
+    updateServerControls();
     setServerStatus(data.message || "Ses örneğin sunucuya kaydedildi. Metin yazıp ses üretebilirsin.");
-    synthesizeButton.disabled = false;
-    deleteServerVoiceButton.disabled = false;
   } catch (error) { setServerStatus("Ses yüklenemedi: " + error.message); }
   finally { updateServerControls(); }
 }
@@ -507,11 +515,13 @@ async function deleteServerVoice() {
     const response = await serverFetch("/api/voice", {method:"DELETE"});
     const data = await response.json();
     $("generatedAudio").replaceChildren();
+    serverVoiceUploaded = false;
     setServerStatus(data.message || "Sunucudaki ses örneği silindi.");
   } catch (error) { setServerStatus("Silme işlemi başarısız: " + error.message); }
   finally { updateServerControls(); }
 }
-\nrecordButton.addEventListener("click", startRecording);
+
+recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", () => { if (recorder && recorder.state !== "inactive") recorder.stop(); });
 $("audioImport").addEventListener("change", event => importAudioFile(event.target.files?.[0]));
 $("sampleSource").addEventListener("change", updateSampleRange);
@@ -537,5 +547,8 @@ if (serverUrlInput) {
   deleteServerVoiceButton.addEventListener("click", deleteServerVoice);
   serverVoiceSource.addEventListener("change", updateServerControls);
   updateServerControls();
-  if (serverToken) setServerStatus("Önceki sekme oturumu bulundu. Sunucuya erişim test ediliyor…");
+  if (serverToken) {
+    setServerStatus("Önceki sekme oturumu kontrol ediliyor…");
+    refreshServerStatus().then(() => setServerStatus(serverVoiceUploaded ? "Oturum açık. Ses örneğin sunucuda hazır." : "Oturum açık. Henüz sunucuya ses örneği yüklenmemiş.")).catch(error => setServerStatus("Oturum kontrol edilemedi: " + error.message));
+  }
 }
