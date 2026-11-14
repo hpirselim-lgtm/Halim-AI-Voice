@@ -22,7 +22,7 @@
       <div class="hero-orb"><span>♫</span></div>
       <p class="eyebrow">KENDİ SESİN, KENDİ KONTROLÜNDE</p>
       <h2>Sesini kaydet.<br><span>Arşivini oluştur.</span></h2>
-      <p class="muted">Kayıtların bu cihazda saklanır. Hiçbir ses dosyası sunucuya gönderilmez.</p>
+      <p class="muted">Ses kayıtların bu iPhone'un tarayıcı alanında saklanır. Kayıtlar sunucuya gönderilmez.</p>
     </section>
     <section class="panel">
       <div class="section-heading"><div><p class="eyebrow">01 / SES KAYDI</p><h2>Ses arşivi oluştur</h2></div><span class="mic-icon">🎙</span></div>
@@ -33,22 +33,23 @@
         <button class="button primary" id="recordButton">● Kaydı başlat</button>
         <button class="button stop" id="stopButton" disabled>Kaydı bitir</button>
       </div>
-      <p class="small-note">Mikrofon izni yalnızca kayıt başlatıldığında istenir. Sayfayı HTTPS üzerinden açmalısın.</p>
+      <p class="small-note">Mikrofon izni kayıt başlatıldığında istenir. Kayıt sırasında başka uygulamaya geçmemeye çalış.</p>
     </section>
     <section class="panel">
       <div class="section-heading"><div><p class="eyebrow">02 / KAYITLARIN</p><h2>Yerel ses arşivi</h2></div><span class="count" id="recordingCount">0 kayıt</span></div>
+      <div class="storage-info" id="storageInfo">Cihaz depolama bilgisi hazırlanıyor…</div>
       <div id="recordings" class="recordings"><p class="empty">Henüz kayıt yok. İlk ses örneğini oluşturabilirsin.</p></div>
     </section>
     <section class="panel future-panel">
       <p class="eyebrow">03 / YAPAY ZEKÂ SESLENDİRME</p>
       <h2>Kişisel ses motoru</h2>
-      <p class="muted">Bu bölüm henüz hazırlık aşamasında. Kendi ses modelimizi cihazda çalıştırabilecek şekilde doğruladıktan sonra metin seslendirme özelliğini ekleyeceğiz.</p>
+      <p class="muted">Kendi ses modelimizi iPhone'da yerel çalıştıracak motoru doğrulama aşamasındayız. Bu sürüm henüz ses klonlamaz.</p>
       <label class="field-label" for="textToSpeak">Seslendirilecek metin</label>
       <textarea id="textToSpeak" rows="3" placeholder="Buraya metnini yaz..."></textarea>
-      <button class="button disabled-look" disabled>Yapay zekâ seslendirme yakında</button>
-      <p class="small-note">Şu an bu düğme çalışmaz; sistemin standart sesi kişisel ses klonlaması değildir.</p>
+      <button class="button disabled-look" disabled>Yapay zekâ seslendirme sonraki sürümde</button>
+      <p class="small-note">Standart telefon sesiyle kişisel ses klonlamasını birbirine karıştırmıyoruz.</p>
     </section>
-    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.1</span></footer>
+    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.2</span></footer>
   </main>
   <script src="./app.js"></script>
 </body>
