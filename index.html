@@ -22,11 +22,24 @@
         <span class="simple-voice-avatar" aria-hidden="true">H</span>
         <span><strong>Halim'in sesi</strong><small>Sabit ses profili · Türkçe</small></span>
       </div>
-      <label class="sr-only" for="speechText">Seslendirilecek Türkçe metin</label>
-      <textarea id="speechText" rows="9" maxlength="12000" placeholder="Okutmak istediğin metni buraya yaz…"></textarea>
-      <button class="button primary simple-voice-button" id="generateSpeechButton" type="button">Metni kendi sesimle oku</button>
-      <p id="speechStatus" class="simple-voice-status" role="status" aria-live="polite">Halim'in ses profili kullanılacak.</p>
+      <label class="field-label" for="speechTitle">Metin başlığı</label>
+      <input id="speechTitle" maxlength="120" placeholder="Örn. Kara tanker operatörü nasıl olunur?">
+      <label class="field-label" for="speechText">Seslendirilecek metin</label>
+      <textarea id="speechText" rows="9" maxlength="30000" placeholder="Okutmak istediğin metni buraya yaz…"></textarea>
+      <div class="simple-voice-actions">
+        <button class="button secondary" id="saveTextButton" type="button">Metni kaydet</button>
+        <button class="button primary" id="generateSpeechButton" type="button">Metni kendi sesimle oku</button>
+      </div>
+      <p id="speechStatus" class="simple-voice-status" role="status" aria-live="polite">Metinlerin ve seslerin bu cihazda saklanır.</p>
       <div id="generatedAudio" class="generated-audio" hidden></div>
+    </section>
+    <section class="library-panel" aria-labelledby="textLibraryHeading">
+      <h2 id="textLibraryHeading">Metin hafızası</h2>
+      <div id="savedTexts" class="library-list"><p class="empty">Henüz kaydedilmiş metin yok.</p></div>
+    </section>
+    <section class="library-panel" aria-labelledby="audioLibraryHeading">
+      <h2 id="audioLibraryHeading">Ses arşivi</h2>
+      <div id="savedAudio" class="library-list"><p class="empty">Henüz oluşturulmuş ses yok.</p></div>
     </section>
   </main>
   <script type="module" src="./halim-simple-ui.js"></script>
