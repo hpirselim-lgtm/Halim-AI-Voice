@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: halim-ai-voice-api
+    runtime: docker
+    rootDir: server
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: APP_PASSWORD
+        sync: false
+      - key: TOKEN_SECRET
+        generateValue: true
+      - key: CORS_ORIGIN
+        value: https://hpirselim-lgtm.github.io
+      - key: DATA_DIR
+        value: /data
+    disk:
+      name: halim-ai-voice-data
+      mountPath: /data
+      sizeGB: 5
