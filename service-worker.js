@@ -1,5 +1,5 @@
-const CACHE_NAME = "halim-ai-voice-v8";
-const APP_FILES = ["./", "./index.html", "./style.css", "./app.js", "./manifest.webmanifest", "./icon.svg", "./vocoloco-integration.js", "./engine-check-ui.js", "./text-archive.js", "./halim-ai-engine.js", "./engine-pipeline-ui.js", "./voice-profile.js"];
+const CACHE_NAME = "halim-ai-voice-v9";
+const APP_FILES = ["./", "./index.html", "./style.css", "./halim-simple-ui.js", "./halim-ai-engine.js", "./manifest.webmanifest", "./icon.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
   self.skipWaiting();
