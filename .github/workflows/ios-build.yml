@@ -24,6 +24,9 @@ jobs:
           cd /tmp/chatterbox-coreml
           git checkout b8288834e783f3a6210757fbaf62f9014220bff9
 
+      - name: Apply Halim AI Voice Turkish defaults
+        run: python3 scripts/ios/apply-halim-turkish.py
+
       - name: Show Xcode version
         run: xcodebuild -version
 
