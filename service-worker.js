@@ -1,4 +1,4 @@
-const CACHE_NAME = "halim-ai-voice-v3";
+const CACHE_NAME = "halim-ai-voice-v4";
 const APP_FILES = ["./", "./index.html", "./style.css", "./app.js", "./manifest.webmanifest", "./icon.svg"];
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_FILES)));
