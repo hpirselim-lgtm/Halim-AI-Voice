@@ -50,7 +50,25 @@ jobs:
             -destination 'generic/platform=iOS' \
             -derivedDataPath /tmp/halim-derived-data \
             CODE_SIGNING_ALLOWED=NO \
+            INFOPLIST_KEY_CFBundleDisplayName="Halim AI Voice" \
             build
+
+      - name: Package unsigned iOS app
+        if: success()
+        run: |
+          APP_PATH="/tmp/halim-derived-data/Build/Products/Debug-iphoneos/ChatterboxApp.app"
+          if [ ! -d "$APP_PATH" ]; then
+            APP_PATH="/tmp/halim-derived-data/Build/Products/Release-iphoneos/ChatterboxApp.app"
+          fi
+          ditto -c -k --sequesterRsrc --keepParent "$APP_PATH" /tmp/Halim-AI-Voice-unsigned-app.zip
+
+      - name: Upload unsigned iOS app artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: Halim-AI-Voice-unsigned-ios-app
+          path: /tmp/Halim-AI-Voice-unsigned-app.zip
+          retention-days: 7
 
       - name: Report build output
         if: always()
