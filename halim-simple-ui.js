@@ -234,3 +234,9 @@ button.addEventListener("click", async () => {
     saveTextButton.disabled = false;
   }
 });
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js").catch(error => {
+    console.warn("Çevrimdışı uygulama kaydı yapılamadı:", error);
+  });
+}
