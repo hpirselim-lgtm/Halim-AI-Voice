@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101522">
+  <meta name="description" content="Cihaz üzerinde çalışan kişisel ses stüdyosu.">
+  <link rel="icon" href="./icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icon.svg">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="stylesheet" href="./style.css">
+  <title>Halim AI Voice</title>
+<meta name="robots" content="noindex,nofollow">
+  <style>.test-ribbon{margin:0 0 18px;padding:12px 14px;border:1px solid #806b35;background:#332b19;color:#ffe2a0;border-radius:12px;font-size:13px;line-height:1.5}.test-ribbon strong{display:block;margin-bottom:3px}</style>
+</head>
+<body>
+  <main class="app">
+    <div class="test-ribbon"><strong>TEST SÜRÜMÜ · Halim AI Voice</strong>Bu ayrı deneme alanıdır. Ana uygulama etkilenmez. Gerçek ses klonlama ve ses üretimi henüz etkin değildir.</div>
+    <header class="topbar">
+      <div class="brand-mark">HV</div>
+      <div><p class="eyebrow">KİŞİSEL SES STÜDYOSU</p><h1>Halim AI Voice</h1></div>
+      <span class="local-pill">● Cihazda</span>
+    </header>
+    <section class="hero">
+      <div class="hero-orb"><span>♫</span></div>
+      <p class="eyebrow">KENDİ SESİN, KENDİ KONTROLÜNDE</p>
+      <h2>Sesini kaydet.<br><span>Arşivini oluştur.</span></h2>
+      <p class="muted">Ses kayıtların bu iPhone'un tarayıcı alanında saklanır. Kayıtlar sunucuya gönderilmez.</p>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">01 / SES KAYDI</p><h2>Ses arşivi oluştur</h2></div><span class="mic-icon">🎙</span></div>
+      <label class="field-label" for="recordingName">Kayıt adı</label>
+      <input id="recordingName" type="text" maxlength="60" placeholder="Örn. Ses örneği 1">
+      <div class="record-status" id="recordStatus" aria-live="polite">Kayıt için hazır</div>
+      <div class="record-actions">
+        <button class="button primary" id="recordButton">● Kaydı başlat</button>
+        <button class="button stop" id="stopButton" disabled>Kaydı bitir</button>
+      </div>
+      <p class="small-note">Mikrofon izni kayıt başlatıldığında istenir. Kayıt sırasında başka uygulamaya geçmemeye çalış.</p>
+    </section>
+    <section class="panel">
+      <div class="section-heading"><div><p class="eyebrow">02 / KAYITLARIN</p><h2>Yerel ses arşivi</h2></div><span class="count" id="recordingCount">0 kayıt</span></div>
+      <label class="button import-button" for="audioImport">＋ Dosyalardan ses ekle</label>
+      <input id="audioImport" class="file-input" type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.caf,.mp4">
+      <p class="small-note import-note">iPhone Dosyalar veya Sesli Notlar uygulamasından dışa aktardığın kendi ses örneklerini ekleyebilirsin. Dosyalar yalnızca bu cihazdaki arşive kopyalanır.</p>
+      <div class="storage-info" id="storageInfo">Cihaz depolama bilgisi hazırlanıyor…</div>
+      <div id="recordings" class="recordings"><p class="empty">Henüz kayıt yok. İlk ses örneğini oluşturabilirsin.</p></div>
+    </section>
+    <section class="panel sample-panel">
+      <div class="section-heading"><div><p class="eyebrow">03 / MODEL İÇİN SES ÖRNEĞİ</p><h2>Kısa ses bölümü hazırla</h2></div><span class="mic-icon">✂️</span></div>
+      <p class="muted">Arşivindeki bir kayıttan 5–10 saniyelik bölüm seç. İşlem bu cihazda yapılır ve WAV örneği olarak arşive eklenir.</p>
+      <label class="field-label" for="sampleSource">Kaynak kayıt</label>
+      <select id="sampleSource"><option value="">Önce ses kaydı ekle</option></select>
+      <div class="sample-grid">
+        <div><label class="field-label" for="sampleStart">Başlangıç (saniye)</label><input id="sampleStart" type="number" min="0" step="0.1" value="0"></div>
+        <div><label class="field-label" for="sampleLength">Örnek süresi</label><select id="sampleLength"><option value="5">5 saniye</option><option value="6">6 saniye</option><option value="7">7 saniye</option><option value="8" selected>8 saniye</option><option value="9">9 saniye</option><option value="10">10 saniye</option></select></div>
+      </div>
+      <button class="button primary sample-button" id="makeSampleButton" disabled>WAV ses örneği oluştur</button>
+      <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
+    </section>
+    <section class="panel" id="engineCheck">
+      <div class="section-heading"><div><p class="eyebrow">04 / TEKNİK UYUMLULUK</p><h2>Cihaz uyumluluğu</h2></div><span class="mic-icon">⚙️</span></div>
+      <p class="muted">Önce iPhone'un WebGPU desteğini ve kullanılabilir depolama alanını kontrol ediyoruz. Bu kontrol model indirmez ve ses arşivine dokunmaz.</p>
+      <button class="button primary" id="checkEngineButton" type="button">Cihazımı kontrol et</button>
+      <div class="record-status" id="engineCheckStatus" aria-live="polite">Henüz kontrol yapılmadı.</div>
+      <div class="small-note" id="engineCheckDetails">Model dosyaları, lisans ve iPhone bellek sınırları doğrulanmadan indirilmeyecek.</div>
+    </section>
+    <section class="panel" id="textArchive">
+      <div class="section-heading"><div><p class="eyebrow">05 / METİN ARŞİVİ</p><h2>Metinlerim</h2></div><span class="mic-icon">📝</span></div>
+      <p class="muted">Birlikte hazırladığımız ve sonradan ekleyeceğin Türkçe metinleri bu cihazda sakla. Bir metni seçerek seslendirme alanına aktarabilirsin.</p>
+      <label class="field-label" for="savedTextSelect">Kayıtlı metinler</label>
+      <select id="savedTextSelect"><option value="">Metin seç</option></select>
+      <div class="record-actions" style="margin-top:12px">
+        <button class="button primary" id="loadSavedTextButton" type="button" disabled>Metni seslendirme alanına aktar</button>
+      </div>
+      <label class="field-label" for="archiveTextTitle">Yeni metin başlığı</label>
+      <input id="archiveTextTitle" type="text" maxlength="100" placeholder="Örn. Kara Tanker Operatörü Nasıl Olunur?">
+      <label class="field-label" for="archiveTextBody">Türkçe metin</label>
+      <textarea id="archiveTextBody" rows="7" maxlength="20000" placeholder="Metnini buraya yapıştır veya yaz…"></textarea>
+      <button class="button primary" id="saveArchiveTextButton" type="button" style="width:100%;margin-top:12px">Metni arşive kaydet</button>
+      <div class="record-status" id="textArchiveStatus" aria-live="polite">Metinler bu cihazda saklanır; mevcut ses kayıtlarına dokunulmaz.</div>
+      <div id="savedTextList"></div>
+    </section>
+    <section class="panel" id="halimEnginePanel">
+      <div class="section-heading"><div><p class="eyebrow">07 / HALIM AI ENGINE</p><h2>Kendi motorumuz</h2></div><span class="mic-icon">🧠</span></div>
+      <p class="muted">Metinleri cümle bütünlüğüyle parçalayan, parçaları sırayla üreten ve sesleri birleştiren kendi üretim çekirdeğimiz. Bu aşamada gerçek model çıkarımı henüz yüklenmedi.</p>
+      <button class="button primary" id="prepareEngineTextButton" type="button">Metni üretim akışına hazırla</button>
+      <div class="record-status" id="halimEngineStatus" aria-live="polite">Motor çekirdeği hazır; yerel ses modeli bağlantısı bekleniyor.</div>
+      <ol id="engineChunkPreview" class="empty"></ol>
+      <p class="small-note">Bu ön hazırlık ses üretmez. Gerçek ses için Halim AI Engine model çalışma zamanı ve model ağırlıkları ayrıca tamamlanmalıdır.</p>
+    </section>
+    <section class="panel" id="halimVoiceProfile">
+      <div class="section-heading"><div><p class="eyebrow">08 / HALIM SES KLONU</p><h2>Benim sesimle oku</h2></div><span class="mic-icon">🎙️</span></div>
+      <p class="muted">Metin arşivindeki içerikler yalnızca Halim ses profiliyle, Türkçe olarak seslendirilecek. Bu alan klonlama için kendi ses referansını hazırlar.</p>
+      <label class="field-label" for="halimVoiceSample">Kendi WAV ses örneğin</label>
+      <select id="halimVoiceSample"><option value="">WAV ses örneği seç</option></select>
+      <button class="button primary" id="prepareHalimVoice" type="button" disabled>Halim ses referansını kaydet</button>
+      <div class="record-status" id="halimVoiceProfileStatus" aria-live="polite">Profil: Halim · Dil: Türkçe (tr-TR) · Klonlama encoder modeli henüz bağlanmadı.</div>
+      <p class="small-note">Bu adım ses örneğini ayrı bir profil alanında saklar; gerçek ses klonlama, kendi encoder modelimiz tamamlandığında etkinleşir.</p>
+    </section>
+    <section class="panel future-panel" id="speechStudio">
+      <div class="section-heading"><div><p class="eyebrow">06 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
+      <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
+      <label class="field-label" for="speechText">Seslendirilecek metin</label>
+      <textarea id="speechText" rows="6" maxlength="2000" placeholder="Örn. Merhaba, ben Halim. Bugün kendi sesimle konuşuyorum."></textarea>
+      <div class="record-status"><span id="speechCharCount">0</span> / 2000 karakter</div>
+      <label class="field-label" for="speechVoice">Ses profili</label>
+      <select id="speechVoice"><option value="personal">Kendi sesim (motor entegrasyonu bekleniyor)</option></select>
+      <button class="button primary" id="generateSpeechButton" type="button" disabled>Ses üretimi – motor henüz bağlanmadı</button>
+      <p class="small-note" id="speechStatus" aria-live="polite">Metin yazma alanı hazır. Ses üretme düğmesi, VocoLoco motoru uygulamanın içine bağlanıp iPhone'da test edilince etkinleştirilecek. Şu anda bu düğme henüz ses üretmez.</p>
+    </section>
+    <footer><span>HALIM AI VOICE</span><span>TEST SÜRÜMÜ 0.1</span></footer>
+  </main>
+
+  <script>
+    (() => {
+      const text = document.getElementById('speechText');
+      const count = document.getElementById('speechCharCount');
+      if (text && count) {
+        const update = () => { count.textContent = String(text.value.length); };
+        text.addEventListener('input', update);
+        update();
+      }
+    })();
+  </script>\n  <script type="module" src="./engine-check-ui.js"></script>
+  <script type="module" src="./text-archive.js"></script>
+  <script type="module" src="./engine-pipeline-ui.js"></script>
+  <script type="module" src="./voice-profile.js"></script>\n  <script src="./app.js"></script>
+</body>
+</html>
