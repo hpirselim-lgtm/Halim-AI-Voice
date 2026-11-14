@@ -32,7 +32,7 @@ replacements = {
 '''Text("Perform it — whisper the whisper, sound excited at the “!”, lift your voice at the “?”. The more expression you give, the more of your voice the clone captures.")''':'''Text("Noktalama işaretlerine dikkat et. Soru cümlelerinde sesini yükselt, heyecanlı bölümleri canlı oku. Doğal ve anlaşılır konuşmaya çalış.")''',
 '''Section("Reference audio")''':'''Section("Ses kaydı")''',
 '''Text("Tap Record and read the passage above (about 25–30 seconds), then tap Stop. Or import an existing clip of clear, expressive speech.")''':'''Text("Kaydet düğmesine basıp yukarıdaki metni yaklaşık 25–30 saniyede oku, ardından Durdur'a bas. İstersen anlaşılır ve temiz bir ses kaydını da içe aktarabilirsin.")''',
-'''? "Stop (%.1fs)"''':'''? "Durdur (%.1fs)"''',
+'''"Stop (%.1fs)"''':'''? "Durdur (%.1fs)"''',
 '''? (recorder.recordedURL == nil ? "Record" : "Re-record")''':'''? (recorder.recordedURL == nil ? "Kaydet" : "Yeniden kaydet")''',
 '''importedURL == nil ? "Import audio file…" : "Imported: \\(importedURL!.lastPathComponent)"''':'''importedURL == nil ? "Ses dosyası seç…" : "Seçildi: \\(importedURL!.lastPathComponent)"''',
 '''Text("Using: \\(src.lastPathComponent)")''':'''Text("Kullanılacak kayıt: \\(src.lastPathComponent)")''',
