@@ -371,7 +371,8 @@ const serverVoiceSource = $("serverVoiceSource");
 let serverToken = sessionStorage.getItem("halimVoiceToken") || "";
 
 function getServerUrl() {
-  return (serverUrlInput.value || localStorage.getItem("halimVoiceServerUrl") || "").trim().replace(/\\/$/, "");
+  const value = (serverUrlInput.value || localStorage.getItem("halimVoiceServerUrl") || "").trim();
+  return value.endsWith("/") ? value.slice(0, -1) : value;
 }
 function setServerStatus(message) {
   if (serverStatus) serverStatus.textContent = message;
@@ -381,7 +382,7 @@ function refreshServerVoiceSources(items) {
   const previous = serverVoiceSource.value;
   serverVoiceSource.replaceChildren();
   const usable = items.filter(item => Number(item.duration) >= 5 && Number(item.duration) <= 10 &&
-    ((item.blob?.type || "").includes("wav") || /\\.wav$/i.test(item.name || "")));
+    ((item.blob?.type || "").includes("wav") || (item.name || "").toLowerCase().endsWith(".wav")));
   if (!usable.length) {
     const option = document.createElement("option");
     option.value = "";
@@ -426,7 +427,7 @@ function updateServerControls() {
 async function connectVoiceServer() {
   const base = getServerUrl();
   const password = $("serverPassword").value;
-  if (!base || !/^https:\\/\\//i.test(base)) {
+  if (!base || !base.startsWith("https://")) {
     setServerStatus("Geçerli ve HTTPS ile başlayan sunucu adresini gir.");
     return;
   }
