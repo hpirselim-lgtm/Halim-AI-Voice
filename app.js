@@ -138,6 +138,7 @@ async function refreshRecordings() {
   const all = await transaction("readonly", store => store.getAll());
   all.sort((a, b) => b.createdAt - a.createdAt);
   $("recordingCount").textContent = all.length + " kayıt";
+  refreshSampleSources(all);
   const totalBytes = all.reduce((sum, item) => sum + (item.blob?.size || 0), 0);
   await updateStorageInfo(totalBytes);
   const container = $("recordings");
@@ -195,6 +196,100 @@ async function refreshRecordings() {
     tools.append(originalDownload, wavDownload, remove);
     row.append(top, audio, tools); container.append(row);
   }
+}
+
+
+function refreshSampleSources(items) {
+  const select = $("sampleSource");
+  if (!select) return;
+  const previous = select.value;
+  select.replaceChildren();
+  const usable = items.filter(item => Number(item.duration) >= 5);
+  if (!usable.length) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = items.length ? "En az 5 saniyelik kayıt gerekli" : "Önce ses kaydı ekle";
+    select.append(option);
+    $("makeSampleButton").disabled = true;
+    return;
+  }
+  for (const item of usable) {
+    const option = document.createElement("option");
+    option.value = item.id;
+    option.textContent = (item.name || "Ses kaydı") + " · " + formatDuration(item.duration);
+    select.append(option);
+  }
+  if (usable.some(item => item.id === previous)) select.value = previous;
+  $("makeSampleButton").disabled = false;
+  updateSampleRange();
+}
+async function updateSampleRange() {
+  const select = $("sampleSource");
+  if (!select || !db) return;
+  const item = await transaction("readonly", store => store.get(select.value));
+  if (!item) return;
+  const length = Number($("sampleLength").value);
+  const maxStart = Math.max(0, Number(item.duration) - length);
+  const start = $("sampleStart");
+  start.max = String(maxStart.toFixed(1));
+  if (Number(start.value) > maxStart) start.value = maxStart.toFixed(1);
+  if (Number(start.value) < 0 || !Number.isFinite(Number(start.value))) start.value = "0";
+}
+function encodeWavMono(samples, sampleRate) {
+  const dataSize = samples.length * 2;
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+  const write = (offset, value) => { for (let i=0;i<value.length;i++) view.setUint8(offset+i,value.charCodeAt(i)); };
+  write(0,"RIFF"); view.setUint32(4,36+dataSize,true); write(8,"WAVE"); write(12,"fmt ");
+  view.setUint32(16,16,true); view.setUint16(20,1,true); view.setUint16(22,1,true);
+  view.setUint32(24,sampleRate,true); view.setUint32(28,sampleRate*2,true);
+  view.setUint16(32,2,true); view.setUint16(34,16,true); write(36,"data"); view.setUint32(40,dataSize,true);
+  let offset=44;
+  for (let i=0;i<samples.length;i++) {
+    const sample=Math.max(-1,Math.min(1,samples[i]));
+    view.setInt16(offset,sample<0?sample*0x8000:sample*0x7fff,true);
+    offset+=2;
+  }
+  return new Blob([buffer],{type:"audio/wav"});
+}
+async function makeVoiceSample() {
+  const button=$("makeSampleButton");
+  button.disabled=true;
+  $("sampleStatus").textContent="Ses bölümü cihazda hazırlanıyor…";
+  try {
+    const item=await transaction("readonly",store=>store.get($("sampleSource").value));
+    if (!item) throw new Error("Kaynak kayıt bulunamadı.");
+    const start=Number($("sampleStart").value);
+    const duration=Number($("sampleLength").value);
+    if (!Number.isFinite(start)||start<0||!Number.isFinite(duration)||duration<5||duration>10||start+duration>item.duration+0.05) {
+      throw new Error("Başlangıç ve süre, kayıt uzunluğunun içinde olmalı.");
+    }
+    const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+    if (!AudioContextClass) throw new Error("Bu tarayıcı ses işleme özelliğini desteklemiyor.");
+    const decodeContext=new AudioContextClass();
+    let decoded;
+    try { decoded=await decodeContext.decodeAudioData(await item.blob.arrayBuffer()); }
+    finally { await decodeContext.close().catch(()=>{}); }
+    const targetRate=24000;
+    const frameCount=Math.floor(duration*targetRate);
+    const offline=new OfflineAudioContext(1,frameCount,targetRate);
+    const source=offline.createBufferSource();
+    source.buffer=decoded;
+    source.connect(offline.destination);
+    source.start(0,start,duration);
+    const rendered=await offline.startRendering();
+    const wav=encodeWavMono(rendered.getChannelData(0),targetRate);
+    const name=safeFileBase(item.name)+"_ornek_"+duration+"sn";
+    await transaction("readwrite",store=>store.add({
+      id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random(),
+      name,createdAt:Date.now(),duration,blob:wav
+    }));
+    await refreshRecordings();
+    $("sampleStatus").textContent="WAV ses örneği hazırlandı ve yalnızca bu cihazın arşivine kaydedildi.";
+    downloadBlob(wav,name+".wav");
+  } catch(error) {
+    $("sampleStatus").textContent="Ses örneği oluşturulamadı: "+error.message;
+  } finally { button.disabled=false; }
 }
 
 async function importAudioFile(file) {
@@ -267,6 +362,10 @@ async function startRecording() {
 recordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", () => { if (recorder && recorder.state !== "inactive") recorder.stop(); });
 $("audioImport").addEventListener("change", event => importAudioFile(event.target.files?.[0]));
+$("sampleSource").addEventListener("change", updateSampleRange);
+$("sampleLength").addEventListener("change", updateSampleRange);
+$("sampleStart").addEventListener("change", updateSampleRange);
+$("makeSampleButton").addEventListener("click", makeVoiceSample);
 
 (async () => {
   try {
