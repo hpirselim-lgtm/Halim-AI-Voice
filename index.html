@@ -56,32 +56,15 @@
       <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
     </section>
     <section class="panel future-panel">
-      <p class="eyebrow">04 / KİŞİSEL SES MOTORU</p>
-      <h2>Halim AI Voice — çevrim içi</h2>
-      <p class="muted">Kendi sunucumuza bağlan. Önce oturum aç, ardından arşivindeki kısa WAV örneğini gönder ve metni kendi sesinle üret.</p>
-      <label class="field-label" for="serverUrl">Sunucu adresi</label>
-      <input id="serverUrl" type="url" placeholder="https://halim-ai-voice-api.onrender.com" autocomplete="url">
-      <label class="field-label" for="serverPassword">Sunucu parolası</label>
-      <input id="serverPassword" type="password" placeholder="Sunucu parolan" autocomplete="current-password">
-      <button class="button primary server-action" id="serverConnectButton">Sunucuya bağlan</button>
-      <div class="record-status" id="serverStatus" aria-live="polite">Sunucu henüz kurulmadı. Dağıtım tamamlandığında adresini buraya gireceğiz.</div>
-      <div class="server-divider"></div>
-      <label class="field-label" for="serverVoiceSource">Gönderilecek 5–10 saniyelik WAV ses örneği</label>
-      <select id="serverVoiceSource"><option value="">Önce kısa WAV örneği oluştur</option></select>
-      <button class="button import-button server-action" id="uploadVoiceButton" disabled>Seçili ses örneğini sunucuya gönder</button>
-      <p class="small-note">Bu düğmeye bastığında seçtiğin ses dosyası internet üzerinden yalnızca belirlediğimiz sunucuya gönderilir.</p>
-      <label class="field-label" for="serverText">Senin sesinle okunacak metin</label>
-      <textarea id="serverText" rows="4" maxlength="2500" placeholder="Buraya Türkçe metnini yaz..."></textarea>
-      <label class="field-label" for="serverEmotion">Konuşma duygusu</label>
-      <select id="serverEmotion">
-        <option value="">Normal</option><option value="sakin">Sakin</option><option value="mutlu">Mutlu</option><option value="üzgün">Üzgün</option><option value="kızgın">Kızgın</option><option value="şaşkın">Şaşkın</option>
-      </select>
-      <button class="button primary server-action" id="synthesizeButton" disabled>Metni benim sesimle oku</button>
-      <div id="generatedAudio" class="generated-audio"></div>
-      <button class="button delete-server-button server-action" id="deleteServerVoiceButton" disabled>Sunucudaki ses örneğimi sil</button>
-      <p class="small-note">Güvenlik: Oturum anahtarı yalnızca bu sekmede tutulur. Ses örneği GitHub'a yüklenmez. Sunucuya dağıtım yapılmadan bu bölüm çalışmaz.</p>
+      <p class="eyebrow">04 / CİHAZDA YAPAY ZEKÂ SES MOTORU</p>
+      <h2>Sesini kendi cihazında üret</h2>
+      <p class="muted">Safari'de çalışan çevrim dışı ses motorunu önce güvenli biçimde deneyeceğiz. Ses kaydın ve yazdığın metin, üretim sırasında başka bir sunucuya gönderilmez.</p>
+      <div class="record-status">İlk kurulumda yaklaşık 2,7 GB model dosyası indirilir. İndirme tamamlandıktan sonra çevrim dışı kullanım mümkün olabilir. iOS 26 veya üzeri gerekir.</div>
+      <a class="button primary server-action" href="https://magkino.github.io/vocoloco_tts/" target="_blank" rel="noopener noreferrer">Yerel ses motorunu dene</a>
+      <p class="small-note">Önemli: Bu ilk deneme ayrı bir uygulama sayfasında açılır. Orada oluşturacağın ses profili ve üretimler şimdilik Halim AI Voice arşivine aktarılmaz; iki uygulamanın yerel kayıt alanları ayrıdır. Önce iPhone'unda çalıştığını doğrulayacağız, sonra kendi tasarımımıza entegre edeceğiz.</p>
+      <p class="small-note">Model lisansı ticari olmayan kullanımla sınırlıdır. Ticari dağıtım veya ücretli hizmette kullanmadan önce lisans koşullarını ayrıca değerlendirmeliyiz.</p>
     </section>
-    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.4</span></footer>
+    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.5</span></footer>
   </main>
   <script src="./app.js"></script>
 </body>
