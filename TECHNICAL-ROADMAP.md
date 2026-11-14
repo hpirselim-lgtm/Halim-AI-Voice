@@ -10,6 +10,7 @@ Kullanıcının kendi sesinden, yalnızca kendi cihazında çalışan Türkçe k
 - [x] Tarayıcı içinde WAV dönüştürme kodu
 - [x] Kayıt süresi ve arşiv boyutunu gösterme
 - [x] iPhone Dosyalar uygulamasından mevcut ses örneği içe aktarma
+- [x] Arşivdeki kayıttan 5–10 saniyelik bölümü seçip mono 24 kHz WAV örneği oluşturma
 - [ ] Gerçek iPhone üzerinde mikrofon, oynatma, WAV dışa aktarma ve veri kalıcılığı testleri
 
 Not: WAV dönüştürme tarayıcının ses çözme desteğine bağlıdır; her kayıt biçimi ve iOS sürümünde doğrulanmış sayılmaz.
@@ -42,7 +43,7 @@ Not: WAV dönüştürme tarayıcının ses çözme desteğine bağlıdır; her k
 4. Model, veri ve kod lisanslarının uygunluğu.
 5. iPhone 14 Pro Max'te bellek, hız, ısınma ve kalite testi.
 
-Henüz kişisel ses klonlaması için doğrulanmış, iPhone üzerinde tamamen çevrimdışı çalışan bir Türkçe model seçilmedi. Önce Türkçe temel TTS'yi Core ML üzerinde test edip, sonra kişisel ses adaptasyonunun mümkün olup olmadığını teknik olarak doğrulayacağız.
+Pocket TTS Turkish'in kendi proje belgeleri, 5–10 saniyelik sesle Türkçe voice cloning desteği iddia ediyor; ancak iOS'a taşınmış yerel bir sürüm veya iPhone 14 Pro Max üzerinde test sonucu doğrulanmadı. UnaMentis/pocket-tts-ios projesi upstream Pocket TTS için native iOS uygulaması ve Rust/Candle altyapısı sunuyor; bunun Türkçe model varyantıyla uyumlu olduğu henüz gösterilmedi. Dolayısıyla kişisel ses klonlaması için aday model mevcut, fakat iPhone'da tamamen çevrimdışı çalışma hâlâ doğrulanmış değil. Önce Türkçe temel TTS'yi Core ML üzerinde test edip, sonra kişisel ses adaptasyonunun mümkün olup olmadığını teknik olarak doğrulayacağız.
 
 ## Aşama 3 — Yerel iOS uygulaması
 PWA kayıt prototipi korunacak. Model yeterliliği doğrulanırsa ayrı bir yerel SwiftUI uygulamasına geçilecek. Bu aşama için Xcode/macOS tabanlı derleme ve gerçek cihaz testi gerekir.
