@@ -1,0 +1,11 @@
+{
+  "name": "Halim AI Voice",
+  "short_name": "Halim Voice",
+  "description": "Kişisel ses stüdyosu",
+  "lang": "tr-TR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b101a",
+  "theme_color": "#101522"
+}
