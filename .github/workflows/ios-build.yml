@@ -2,6 +2,9 @@ name: iOS local voice engine build check
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/ios-build.yml'
 
 permissions:
   contents: read
