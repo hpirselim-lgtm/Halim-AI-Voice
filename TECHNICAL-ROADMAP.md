@@ -27,6 +27,14 @@ Not: WAV dönüştürme tarayıcının ses çözme desteğine bağlıdır; her k
 - Ahenk Cep: Küçük cihaz içi Türkçe TTS yaklaşımı; yayımlanan açıklamada öğrenci modelin Ahenk sesini öğrendiği belirtiliyor. Kullanıcının ayrı sesini kolayca kişiselleştirdiği anlamına gelmez.
 - OnDeviceTTS/Kokoro iOS paketi: incelenen dağıtımda hazır sesler İngilizce; Türkçe dil yolu hazır değil.
 
+### Yeni bulgu: kişisel sesi taklit edebilen Türkçe modeller
+
+- **Pocket TTS Turkish (şu an birinci prototip adayı):** 110M parametre, yaklaşık 440 MB model, 24 kHz mono çıktı. Kendi sesinden 5–10 saniyelik temiz bir referansla ses profili çıkarabildiği ve beş duygu etiketi sunduğu belgelenmiş. Model ağırlıkları CC-BY-4.0, Python kodu Apache-2.0. Tek CPU iş parçacığında gerçek zamandan hızlı çalıştığı belirtiliyor. Ancak resmî paket Python/PyTorch tabanlı; iPhone Safari/PWA veya Core ML üzerinde yerel çalıştığı doğrulanmış değil. Bu nedenle henüz uygulamaya entegre edilmiş sayılmaz.
+- **Anka TTS:** Türkçe zero-shot ses klonlama; 7–9 saniyelik referans ses ve birebir transkript istiyor. 336M parametre. CUDA, Apple MPS ve CPU arka uçları belgelenmiş; ancak iOS uygulaması/Core ML portu gösterilmemiş. Model ağırlıkları CC-BY-NC-4.0 olduğundan ticari kullanım için uygun değil; yalnızca kişisel/hobi/araştırma kullanımı lisans kapsamında.
+- **EMA Lightning:** Hızlı ve küçük Türkçe temel TTS; fakat tek sesli ve ses klonlama özelliği yok. Kişisel ses motoru olarak tek başına kullanılamaz.
+
+**Geçici karar:** Pocket TTS Turkish'i araştırma ve cihazda prototipleme için ilk sıraya al. Bu bir iPhone uyumluluk onayı değildir. Önce modelin Python/PyTorch bağımlılıklarını iOS'ta çalıştırmadan nasıl yerel Swift/Core ML veya başka bir mobil çalışma zamanına taşıyabileceğimizi doğrula. Model ağırlıklarını GitHub deposuna veya uygulama kaynaklarına koyma; cihazda indirme/kurulum stratejisi ve lisans atfı ayrıca tasarlanmalı.
+
 ### Seçim ilkeleri
 1. Türkçe telaffuz ve noktalama başarısı.
 2. Kullanıcının kendi kayıtlarından ses kimliği/konuşmacı uyarlaması.
