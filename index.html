@@ -62,8 +62,24 @@
       <div class="record-status" id="engineCheckStatus" aria-live="polite">Henüz kontrol yapılmadı.</div>
       <div class="small-note" id="engineCheckDetails">Model dosyaları, lisans ve iPhone bellek sınırları doğrulanmadan indirilmeyecek.</div>
     </section>
+    <section class="panel" id="textArchive">
+      <div class="section-heading"><div><p class="eyebrow">05 / METİN ARŞİVİ</p><h2>Metinlerim</h2></div><span class="mic-icon">📝</span></div>
+      <p class="muted">Birlikte hazırladığımız ve sonradan ekleyeceğin Türkçe metinleri bu cihazda sakla. Bir metni seçerek seslendirme alanına aktarabilirsin.</p>
+      <label class="field-label" for="savedTextSelect">Kayıtlı metinler</label>
+      <select id="savedTextSelect"><option value="">Metin seç</option></select>
+      <div class="record-actions" style="margin-top:12px">
+        <button class="button primary" id="loadSavedTextButton" type="button" disabled>Metni seslendirme alanına aktar</button>
+      </div>
+      <label class="field-label" for="archiveTextTitle">Yeni metin başlığı</label>
+      <input id="archiveTextTitle" type="text" maxlength="100" placeholder="Örn. Kara Tanker Operatörü Nasıl Olunur?">
+      <label class="field-label" for="archiveTextBody">Türkçe metin</label>
+      <textarea id="archiveTextBody" rows="7" maxlength="20000" placeholder="Metnini buraya yapıştır veya yaz…"></textarea>
+      <button class="button primary" id="saveArchiveTextButton" type="button" style="width:100%;margin-top:12px">Metni arşive kaydet</button>
+      <div class="record-status" id="textArchiveStatus" aria-live="polite">Metinler bu cihazda saklanır; mevcut ses kayıtlarına dokunulmaz.</div>
+      <div id="savedTextList"></div>
+    </section>
     <section class="panel future-panel" id="speechStudio">
-      <div class="section-heading"><div><p class="eyebrow">04 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
+      <div class="section-heading"><div><p class="eyebrow">06 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
       <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
       <label class="field-label" for="speechText">Seslendirilecek metin</label>
       <textarea id="speechText" rows="6" maxlength="2000" placeholder="Örn. Merhaba, ben Halim. Bugün kendi sesimle konuşuyorum."></textarea>
@@ -86,6 +102,7 @@
         update();
       }
     })();
-  </script>\n  <script type="module" src="./engine-check-ui.js"></script>\n  <script src="./app.js"></script>
+  </script>\n  <script type="module" src="./engine-check-ui.js"></script>
+  <script type="module" src="./text-archive.js"></script>\n  <script src="./app.js"></script>
 </body>
 </html>
