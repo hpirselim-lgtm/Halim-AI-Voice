@@ -26,8 +26,12 @@ Sunucu kodu ve dağıtım adımları için SERVER-DEPLOYMENT.md dosyasına bak. 
 Pocket TTS Turkish, 5–10 saniyelik tek konuşmacı ses örneğiyle ses taklidi ve Türkçe metin üretimi sunar. Paket kodu Apache-2.0, model ağırlıkları CC-BY-4.0 lisanslıdır. Model ilk çalıştırmada sunucuya indirilir; yaklaşık 440 MB alan gerektirir. Kaynak ve atıf bilgileri upstream proje sayfasında yer alır:
 https://github.com/witetech/pocket-tts-turkish
 
+## iPhone'da tamamen yerel uygulama çalışması
+Sunucu gerektirmeyen yerel iOS sürümü için Chatterbox Core ML araştırması başlatıldı. Türkçe dil kodu desteklenen diller arasında; ses profili oluşturma ve ses üretimi cihaz üzerinde tasarlanabiliyor. Ancak iPhone 14 Pro Max'te performans ve Türkçe ses kalitesi henüz doğrulanmadı. Hiçbir kişisel ses kaydı üçüncü tarafa gönderilmeyecek.
+Ayrıntılı teknik plan ve test listesi: [IOS-LOCAL-APP.md](./IOS-LOCAL-APP.md).
+
 ## Yayın
 GitHub Pages, main dalındaki web arayüzünü yayınlar. Sunucu ayrı dağıtılır. Mikrofon erişimi için HTTPS ve kullanıcı izni gerekir.
 
 ## Mevcut durum
-Web arayüzü ve sunucu API iskeleti depoya eklenmiştir. Render servisi henüz oluşturulmamış, model ilk kez indirilmemiş ve gerçek ses üretimi uçtan uca test edilmemiştir. Bu nedenle çevrim içi ses klonlama henüz kullanıma hazır olarak değerlendirilmemelidir.
+Web arayüzü ve sunucu API iskeleti depoya eklenmiştir. Render servisi henüz oluşturulmamış, model ilk kez indirilmemiş ve gerçek ses üretimi uçtan uca test edilmemiştir. Yerel iOS sürümü de henüz derlenmemiş veya iPhone üzerinde test edilmemiştir. Bu nedenle ses klonlama henüz kullanıma hazır olarak değerlendirilmemelidir.
