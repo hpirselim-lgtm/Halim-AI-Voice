@@ -1,0 +1,55 @@
+name: iOS local voice engine build check
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-upstream-engine:
+    name: Build Chatterbox Core ML iOS app (unsigned)
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - name: Checkout Halim AI Voice
+        uses: actions/checkout@v4
+
+      - name: Checkout reviewed Chatterbox Core ML source
+        run: |
+          git clone https://github.com/iliasaz/chatterbox-coreml.git /tmp/chatterbox-coreml
+          cd /tmp/chatterbox-coreml
+          git checkout b8288834e783f3a6210757fbaf62f9014220bff9
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Resolve Swift package dependencies
+        working-directory: /tmp/chatterbox-coreml
+        run: |
+          xcodebuild -resolvePackageDependencies \
+            -project ChatterboxApp/ChatterboxApp.xcodeproj \
+            -scheme ChatterboxApp
+
+      - name: Build unsigned iOS app
+        working-directory: /tmp/chatterbox-coreml
+        run: |
+          xcodebuild \
+            -project ChatterboxApp/ChatterboxApp.xcodeproj \
+            -scheme ChatterboxApp \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath /tmp/halim-derived-data \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: Report build output
+        if: always()
+        run: |
+          if [ -d /tmp/halim-derived-data/Build/Products/Release-iphoneos/ChatterboxApp.app ]; then
+            echo "Unsigned iOS app build output exists."
+          elif [ -d /tmp/halim-derived-data/Build/Products/Debug-iphoneos/ChatterboxApp.app ]; then
+            echo "Unsigned iOS app build output exists."
+          else
+            echo "No app bundle was produced. See build logs above."
+            exit 1
+          fi
