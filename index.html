@@ -55,17 +55,30 @@
       <button class="button primary sample-button" id="makeSampleButton" disabled>WAV ses örneği oluştur</button>
       <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
     </section>
-    <section class="panel future-panel">
-      <p class="eyebrow">04 / CİHAZDA YAPAY ZEKÂ SES MOTORU</p>
-      <h2>Sesini kendi cihazında üret</h2>
-      <p class="muted">Safari'de çalışan çevrim dışı ses motorunu önce güvenli biçimde deneyeceğiz. Ses kaydın ve yazdığın metin, üretim sırasında başka bir sunucuya gönderilmez.</p>
-      <div class="record-status">İlk kurulumda yaklaşık 2,7 GB model dosyası indirilir. İndirme tamamlandıktan sonra çevrim dışı kullanım mümkün olabilir. iOS 26 veya üzeri gerekir.</div>
-      <a class="button primary server-action" href="https://magkino.github.io/vocoloco_tts/" target="_blank" rel="noopener noreferrer">Yerel ses motorunu dene</a>
-      <p class="small-note">Önemli: Bu ilk deneme ayrı bir uygulama sayfasında açılır. Orada oluşturacağın ses profili ve üretimler şimdilik Halim AI Voice arşivine aktarılmaz; iki uygulamanın yerel kayıt alanları ayrıdır. Önce iPhone'unda çalıştığını doğrulayacağız, sonra kendi tasarımımıza entegre edeceğiz.</p>
-      <p class="small-note">Model lisansı ticari olmayan kullanımla sınırlıdır. Ticari dağıtım veya ücretli hizmette kullanmadan önce lisans koşullarını ayrıca değerlendirmeliyiz.</p>
+    <section class="panel future-panel" id="speechStudio">
+      <div class="section-heading"><div><p class="eyebrow">04 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
+      <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
+      <label class="field-label" for="speechText">Seslendirilecek metin</label>
+      <textarea id="speechText" rows="6" maxlength="2000" placeholder="Örn. Merhaba, ben Halim. Bugün kendi sesimle konuşuyorum."></textarea>
+      <div class="record-status"><span id="speechCharCount">0</span> / 2000 karakter</div>
+      <label class="field-label" for="speechVoice">Ses profili</label>
+      <select id="speechVoice"><option value="personal">Kendi sesim (motor entegrasyonu bekleniyor)</option></select>
+      <button class="button primary" id="generateSpeechButton" type="button" disabled>Ses üretimi – motor henüz bağlanmadı</button>
+      <p class="small-note" id="speechStatus" aria-live="polite">Metin yazma alanı hazır. Ses üretme düğmesi, VocoLoco motoru uygulamanın içine bağlanıp iPhone'da test edilince etkinleştirilecek. Şu anda bu düğme henüz ses üretmez.</p>
     </section>
     <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.5</span></footer>
   </main>
-  <script src="./app.js"></script>
+
+  <script>
+    (() => {
+      const text = document.getElementById('speechText');
+      const count = document.getElementById('speechCharCount');
+      if (text && count) {
+        const update = () => { count.textContent = String(text.value.length); };
+        text.addEventListener('input', update);
+        update();
+      }
+    })();
+  </script>\n  <script src="./app.js"></script>
 </body>
 </html>
