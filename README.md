@@ -1,19 +1,33 @@
 # Halim AI Voice
 
-Kişisel ses stüdyosu için cihaz öncelikli PWA prototipi.
+Kişisel Türkçe ses stüdyosu. Web arayüzü GitHub Pages üzerinde, kişisel ses klonlama motoru ise ayrı ve parola korumalı sunucuda çalışacak şekilde hazırlanıyor.
 
-## İlk sürüm
-- Tarayıcı üzerinden mikrofonla ses kaydı
-- Kayıtları IndexedDB içinde bu cihazda saklama
+## Özellikler
+- iPhone Safari üzerinden mikrofonla ses kaydı
+- Kayıtları IndexedDB içinde cihazda saklama
 - Kayıtları dinleme, indirme ve silme
-- Uygulama kabuğu için çevrimdışı önbellek
-- iPhone Safari üzerinden ana ekrana eklenebilir web uygulaması
+- 5–10 saniyelik mono 24 kHz WAV ses örneği hazırlama
+- Ayrı sunucuya parola ile bağlanma
+- Pocket TTS Turkish ile kişisel sesle Türkçe metin üretimi için API arayüzü
+- Üretilen WAV sesini dinleme ve indirme
 
-## Gizlilik
-Ses kayıtları herhangi bir sunucuya yüklenmez. GitHub deposunda yalnızca uygulama kaynak kodları bulunur. Kayıtlar tarayıcının yerel IndexedDB alanında saklanır. Tarayıcı verilerini silmek kayıtları da silebilir.
+## Mimari ve gizlilik
+- GitHub deposunda uygulama kaynak kodu bulunur; kişisel ses kayıtları ve model ağırlıkları depoya eklenmez.
+- Kısa ses örneği, kullanıcı Sunucuya gönder düğmesine bastığında HTTPS üzerinden yalnızca yapılandırılmış kişisel API sunucusuna gönderilir.
+- Sunucu erişimi APP_PASSWORD ile açılan ve 12 saat geçerli imzalı oturum anahtarıyla korunur.
+- Sunucu referans sesini ve model önbelleğini kalıcı /data diskinde tutar.
+- Uygulamada sunucudaki referans sesi silme işlemi bulunur.
+- Cihazdaki ses arşivi IndexedDB'de kalır; tarayıcı verileri temizlenirse silinebilir.
 
-## Önemli sınırlar
-Bu sürüm henüz kişisel ses klonlama veya yapay zekâ seslendirme yapmaz. Yapay zekâ motoru, iPhone üzerinde tamamen yerel çalışması ve lisans koşulları doğrulandıktan sonra ayrı bir aşamada entegre edilecektir.
+## Sunucu kurulumu
+Sunucu kodu ve dağıtım adımları için SERVER-DEPLOYMENT.md dosyasına bak. Render kurulumu yapılmadan önce güncel ücretler kontrol edilmeli ve kullanıcı tarafından onaylanmalıdır. Sunucu URL'si uygulama içindeki Sunucu adresi alanına girilir.
+
+## Model
+Pocket TTS Turkish, 5–10 saniyelik tek konuşmacı ses örneğiyle ses taklidi ve Türkçe metin üretimi sunar. Paket kodu Apache-2.0, model ağırlıkları CC-BY-4.0 lisanslıdır. Model ilk çalıştırmada sunucuya indirilir; yaklaşık 440 MB alan gerektirir. Kaynak ve atıf bilgileri upstream proje sayfasında yer alır:
+https://github.com/witetech/pocket-tts-turkish
 
 ## Yayın
-GitHub Actions, `main` dalına yapılan güncellemeleri GitHub Pages üzerinde yayınlar. Mikrofon erişimi için HTTPS ve kullanıcı izni gerekir.
+GitHub Pages, main dalındaki web arayüzünü yayınlar. Sunucu ayrı dağıtılır. Mikrofon erişimi için HTTPS ve kullanıcı izni gerekir.
+
+## Mevcut durum
+Web arayüzü ve sunucu API iskeleti depoya eklenmiştir. Render servisi henüz oluşturulmamış, model ilk kez indirilmemiş ve gerçek ses üretimi uçtan uca test edilmemiştir. Bu nedenle çevrim içi ses klonlama henüz kullanıma hazır olarak değerlendirilmemelidir.
