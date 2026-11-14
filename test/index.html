@@ -8,53 +8,36 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="icon" href="./icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="./style.css">
-<title>Halim AI Voice · Test</title>
+<title>Halim AI Voice</title>
 </head>
 <body>
 <main class="app">
   <header class="topbar">
-    <div class="brand-mark">HV</div>
-    <div><p class="eyebrow">TEST SÜRÜMÜ 0.2</p><h1>Halim AI Voice</h1></div>
-    <span class="local-pill">TEST</span>
+    <div class="brand-mark">H</div>
+    <div><p class="eyebrow">KİŞİSEL SESLENDİRME</p><h1>Halim AI Voice</h1></div>
   </header>
-  <section class="intro">
-    <h2>Metnini hazırla.</h2>
-    <p>Türkçe metnini yaz veya arşivinden seç. Şimdilik metni üretim parçalarına ayırıp kontrol ediyoruz.</p>
+  <section class="voice-card">
+    <span class="voice-icon">🎙</span>
+    <div><span class="voice-label">SES PROFİLİ</span><strong>Halim'in kendi sesi</strong></div>
+    <span class="active-dot" aria-label="Seçili"></span>
   </section>
-  <section class="panel">
-    <label class="field-label" for="savedTexts">Kayıtlı metinler</label>
-    <select id="savedTexts"><option value="">Arşivden metin seç</option></select>
-    <label class="field-label" for="textTitle">Metin başlığı</label>
-    <input id="textTitle" maxlength="100" placeholder="Örn. Kara Tanker Operatörü">
-    <label class="field-label" for="speechText">Seslendirilecek Türkçe metin</label>
-    <textarea id="speechText" rows="10" maxlength="20000" placeholder="Metnini buraya yaz veya arşivden seç…"></textarea>
-    <div class="counter"><span id="charCount">0</span> / 20.000 karakter</div>
-    <div class="actions">
-      <button class="button secondary" id="saveText">Metni kaydet</button>
-      <button class="button primary" id="splitText">Metni parçala</button>
-    </div>
-    <p class="status" id="status" aria-live="polite">Metinler bu cihazda saklanır. Henüz ses üretimi yapılmaz.</p>
+  <section class="composer">
+    <label for="speechText">Seslendirmek istediğin metni yaz</label>
+    <textarea id="speechText" maxlength="20000" placeholder="Metnini buraya yaz veya yapıştır…" autofocus></textarea>
+    <div class="counter"><span id="charCount">0</span> / 20.000</div>
+    <button id="generateButton" class="generate" disabled>Metni kendi sesimle oku</button>
+    <p id="status" class="status" aria-live="polite">Kendi sesinle seslendirme motoru henüz bağlanmadı.</p>
   </section>
-  <section class="panel results" id="resultsPanel" hidden>
-    <div class="section-heading"><h2>Üretim parçaları</h2><span id="partCount"></span></div>
-    <ol id="parts"></ol>
-  </section>
-  <p class="footnote">Halim AI Engine · Türkçe · Kişisel kullanım</p>
+  <footer>Yalnızca Türkçe · Yalnızca Halim'in sesi</footer>
 </main>
-<script type="module">
-import { splitTextIntoChunks } from "./halim-ai-engine.js";
-const $ = id => document.getElementById(id);
-const DB="halim-ai-text-archive", STORE="texts";
-let db;
-function openDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB,1);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:"id"});};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);});}
-function tx(mode,fn){return new Promise((resolve,reject)=>{const t=db.transaction(STORE,mode);const r=fn(t.objectStore(STORE));let value;r.onsuccess=()=>value=r.result;r.onerror=()=>reject(r.error);t.oncomplete=()=>resolve(value);t.onerror=()=>reject(t.error);});}
-async function refresh(selected=""){const rows=(await tx("readonly",s=>s.getAll())).sort((a,b)=>b.updatedAt-a.updatedAt);const sel=$("savedTexts");sel.replaceChildren(new Option("Arşivden metin seç",""));rows.forEach(x=>sel.add(new Option(x.title,x.id)));if(rows.some(x=>x.id===selected))sel.value=selected;}
-$("speechText").addEventListener("input",()=>{$("charCount").textContent=$("speechText").value.length;});
-$("savedTexts").addEventListener("change",async()=>{const id=$("savedTexts").value;if(!id)return;const item=await tx("readonly",s=>s.get(id));if(item){$("textTitle").value=item.title;$("speechText").value=item.body;$("charCount").textContent=item.body.length;$("status").textContent="Metin arşivden yüklendi."; }});
-$("saveText").addEventListener("click",async()=>{const title=$("textTitle").value.trim(),body=$("speechText").value.trim();if(!title||!body){$("status").textContent="Kaydetmek için başlık ve metin yaz.";return;}const id=$("savedTexts").value||("text-"+Date.now());await tx("readwrite",s=>s.put({id,title,body,updatedAt:Date.now()}));await refresh(id);$("status").textContent="Metin bu cihazdaki arşive kaydedildi.";});
-$("splitText").addEventListener("click",()=>{const chunks=splitTextIntoChunks($("speechText").value);const list=$("parts");list.replaceChildren();if(!chunks.length){$("status").textContent="Önce seslendirilecek metni yaz."; $("resultsPanel").hidden=true;return;}chunks.forEach((part,i)=>{const li=document.createElement("li");li.textContent=part;list.append(li);});$("partCount").textContent=chunks.length+" parça";$("resultsPanel").hidden=false;$("status").textContent="Metin cümle bütünlüğü korunarak parçalara ayrıldı. Bu işlem ses üretmez.";});
-(async()=>{try{db=await openDb();await refresh();}catch(e){$("status").textContent="Metin arşivi açılamadı: "+e.message;}})();
-if("serviceWorker" in navigator)navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+<script>
+const text=document.getElementById("speechText");
+const count=document.getElementById("charCount");
+text.addEventListener("input",()=>{count.textContent=text.value.length;});
+document.getElementById("generateButton").addEventListener("click",()=>{
+ document.getElementById("status").textContent="Ses üretim motoru henüz hazır değil.";
+});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
 </script>
 </body>
 </html>
