@@ -55,6 +55,13 @@
       <button class="button primary sample-button" id="makeSampleButton" disabled>WAV ses örneği oluştur</button>
       <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
     </section>
+    <section class="panel" id="engineCheck">
+      <div class="section-heading"><div><p class="eyebrow">04 / VOCOLOCO MOTORU</p><h2>Cihaz uyumluluğu</h2></div><span class="mic-icon">⚙️</span></div>
+      <p class="muted">Önce iPhone'un WebGPU desteğini ve kullanılabilir depolama alanını kontrol ediyoruz. Bu kontrol model indirmez ve ses arşivine dokunmaz.</p>
+      <button class="button primary" id="checkEngineButton" type="button">Cihazımı kontrol et</button>
+      <div class="record-status" id="engineCheckStatus" aria-live="polite">Henüz kontrol yapılmadı.</div>
+      <div class="small-note" id="engineCheckDetails">Model dosyaları, lisans ve iPhone bellek sınırları doğrulanmadan indirilmeyecek.</div>
+    </section>
     <section class="panel future-panel" id="speechStudio">
       <div class="section-heading"><div><p class="eyebrow">04 / TÜRKÇE SES STÜDYOSU</p><h2>Metnini seslendir</h2></div><span class="mic-icon">🔊</span></div>
       <p class="muted">Okutmak istediğin Türkçe metni buraya yaz. Bu alan Halim AI Voice'un kendi ses üretim ekranıdır.</p>
@@ -79,6 +86,6 @@
         update();
       }
     })();
-  </script>\n  <script src="./app.js"></script>
+  </script>\n  <script type="module" src="./engine-check-ui.js"></script>\n  <script src="./app.js"></script>
 </body>
 </html>
