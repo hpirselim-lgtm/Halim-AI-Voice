@@ -43,6 +43,18 @@
       <div class="storage-info" id="storageInfo">Cihaz depolama bilgisi hazırlanıyor…</div>
       <div id="recordings" class="recordings"><p class="empty">Henüz kayıt yok. İlk ses örneğini oluşturabilirsin.</p></div>
     </section>
+    <section class="panel sample-panel">
+      <div class="section-heading"><div><p class="eyebrow">03 / MODEL İÇİN SES ÖRNEĞİ</p><h2>Kısa ses bölümü hazırla</h2></div><span class="mic-icon">✂️</span></div>
+      <p class="muted">Arşivindeki bir kayıttan 5–10 saniyelik bölüm seç. İşlem bu cihazda yapılır ve WAV örneği olarak arşive eklenir.</p>
+      <label class="field-label" for="sampleSource">Kaynak kayıt</label>
+      <select id="sampleSource"><option value="">Önce ses kaydı ekle</option></select>
+      <div class="sample-grid">
+        <div><label class="field-label" for="sampleStart">Başlangıç (saniye)</label><input id="sampleStart" type="number" min="0" step="0.1" value="0"></div>
+        <div><label class="field-label" for="sampleLength">Örnek süresi</label><select id="sampleLength"><option value="5">5 saniye</option><option value="6">6 saniye</option><option value="7">7 saniye</option><option value="8" selected>8 saniye</option><option value="9">9 saniye</option><option value="10">10 saniye</option></select></div>
+      </div>
+      <button class="button primary sample-button" id="makeSampleButton" disabled>WAV ses örneği oluştur</button>
+      <p class="small-note" id="sampleStatus">En iyi sonuç için tek kişinin konuştuğu, net ve arka plan gürültüsü az bir bölüm seç.</p>
+    </section>
     <section class="panel future-panel">
       <p class="eyebrow">03 / YAPAY ZEKÂ SESLENDİRME</p>
       <h2>Kişisel ses motoru</h2>
@@ -52,7 +64,7 @@
       <button class="button disabled-look" disabled>Yapay zekâ seslendirme sonraki sürümde</button>
       <p class="small-note">Standart telefon sesiyle kişisel ses klonlamasını birbirine karıştırmıyoruz.</p>
     </section>
-    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.3</span></footer>
+    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.4</span></footer>
   </main>
   <script src="./app.js"></script>
 </body>
