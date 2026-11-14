@@ -85,7 +85,8 @@ async function refreshRecordings() {
     download.addEventListener("click", () => {
       const link = document.createElement("a");
       link.href = objectUrl;
-      link.download = item.name.replace(/[^a-z0-9-_ğüşöçıİĞÜŞÖÇ ]/gi, "_") + ".webm";
+      const extension = item.blob.type.includes("mp4") ? "m4a" : item.blob.type.includes("ogg") ? "ogg" : item.blob.type.includes("wav") ? "wav" : "webm";
+      link.download = item.name.replace(/[^a-z0-9-_ğüşöçıİĞÜŞÖÇ ]/gi, "_") + "." + extension;
       link.click();
     });
     const remove = document.createElement("button");
