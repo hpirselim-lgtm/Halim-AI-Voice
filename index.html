@@ -37,19 +37,22 @@
     </section>
     <section class="panel">
       <div class="section-heading"><div><p class="eyebrow">02 / KAYITLARIN</p><h2>Yerel ses arşivi</h2></div><span class="count" id="recordingCount">0 kayıt</span></div>
+      <label class="button import-button" for="audioImport">＋ Dosyalardan ses ekle</label>
+      <input id="audioImport" class="file-input" type="file" accept="audio/*,.m4a,.mp3,.wav,.aac,.caf,.mp4">
+      <p class="small-note import-note">iPhone Dosyalar veya Sesli Notlar uygulamasından dışa aktardığın kendi ses örneklerini ekleyebilirsin. Dosyalar yalnızca bu cihazdaki arşive kopyalanır.</p>
       <div class="storage-info" id="storageInfo">Cihaz depolama bilgisi hazırlanıyor…</div>
       <div id="recordings" class="recordings"><p class="empty">Henüz kayıt yok. İlk ses örneğini oluşturabilirsin.</p></div>
     </section>
     <section class="panel future-panel">
       <p class="eyebrow">03 / YAPAY ZEKÂ SESLENDİRME</p>
       <h2>Kişisel ses motoru</h2>
-      <p class="muted">Kendi ses modelimizi iPhone'da yerel çalıştıracak motoru doğrulama aşamasındayız. Bu sürüm henüz ses klonlamaz.</p>
+      <p class="muted">Türkçe yerel seslendirme motorunu ve kendi sesine uyarlama yöntemini ayrı ayrı doğruluyoruz. Bu sürüm henüz ses klonlamaz.</p>
       <label class="field-label" for="textToSpeak">Seslendirilecek metin</label>
       <textarea id="textToSpeak" rows="3" placeholder="Buraya metnini yaz..."></textarea>
       <button class="button disabled-look" disabled>Yapay zekâ seslendirme sonraki sürümde</button>
       <p class="small-note">Standart telefon sesiyle kişisel ses klonlamasını birbirine karıştırmıyoruz.</p>
     </section>
-    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.2</span></footer>
+    <footer><span>HALIM AI VOICE</span><span>Ön sürüm 0.3</span></footer>
   </main>
   <script src="./app.js"></script>
 </body>
