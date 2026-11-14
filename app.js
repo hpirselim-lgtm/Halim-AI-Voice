@@ -139,6 +139,7 @@ async function refreshRecordings() {
   all.sort((a, b) => b.createdAt - a.createdAt);
   $("recordingCount").textContent = all.length + " kayıt";
   refreshSampleSources(all);
+  refreshServerVoiceSources(all);
   const totalBytes = all.reduce((sum, item) => sum + (item.blob?.size || 0), 0);
   await updateStorageInfo(totalBytes);
   const container = $("recordings");
@@ -359,7 +360,157 @@ async function startRecording() {
   }
 }
 
-recordButton.addEventListener("click", startRecording);
+
+const serverUrlInput = $("serverUrl");
+const serverStatus = $("serverStatus");
+const serverConnectButton = $("serverConnectButton");
+const uploadVoiceButton = $("uploadVoiceButton");
+const synthesizeButton = $("synthesizeButton");
+const deleteServerVoiceButton = $("deleteServerVoiceButton");
+const serverVoiceSource = $("serverVoiceSource");
+let serverToken = sessionStorage.getItem("halimVoiceToken") || "";
+
+function getServerUrl() {
+  return (serverUrlInput.value || localStorage.getItem("halimVoiceServerUrl") || "").trim().replace(/\\/$/, "");
+}
+function setServerStatus(message) {
+  if (serverStatus) serverStatus.textContent = message;
+}
+function refreshServerVoiceSources(items) {
+  if (!serverVoiceSource) return;
+  const previous = serverVoiceSource.value;
+  serverVoiceSource.replaceChildren();
+  const usable = items.filter(item => Number(item.duration) >= 5 && Number(item.duration) <= 10 &&
+    ((item.blob?.type || "").includes("wav") || /\\.wav$/i.test(item.name || "")));
+  if (!usable.length) {
+    const option = document.createElement("option");
+    option.value = "";
+    option.textContent = "Önce 5–10 saniyelik WAV örneği oluştur";
+    serverVoiceSource.append(option);
+  } else {
+    for (const item of usable) {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = (item.name || "WAV ses örneği") + " · " + formatDuration(item.duration);
+      serverVoiceSource.append(option);
+    }
+    if (usable.some(item => item.id === previous)) serverVoiceSource.value = previous;
+  }
+  uploadVoiceButton.disabled = !serverToken || !usable.length;
+}
+async function serverFetch(path, options = {}) {
+  const base = getServerUrl();
+  if (!base) throw new Error("Önce sunucu adresini gir.");
+  const headers = new Headers(options.headers || {});
+  if (serverToken) headers.set("Authorization", "Bearer " + serverToken);
+  const response = await fetch(base + path, {...options, headers});
+  if (response.status === 401) {
+    serverToken = "";
+    sessionStorage.removeItem("halimVoiceToken");
+    updateServerControls();
+    throw new Error("Oturum sona erdi. Yeniden bağlan.");
+  }
+  if (!response.ok) {
+    let message = "Sunucu hatası (" + response.status + ")";
+    try { const data = await response.json(); if (data.detail) message = data.detail; } catch (_) {}
+    throw new Error(message);
+  }
+  return response;
+}
+function updateServerControls() {
+  const connected = Boolean(serverToken);
+  uploadVoiceButton.disabled = !connected || !serverVoiceSource.value;
+  synthesizeButton.disabled = !connected;
+  deleteServerVoiceButton.disabled = !connected;
+}
+async function connectVoiceServer() {
+  const base = getServerUrl();
+  const password = $("serverPassword").value;
+  if (!base || !/^https:\\/\\//i.test(base)) {
+    setServerStatus("Geçerli ve HTTPS ile başlayan sunucu adresini gir.");
+    return;
+  }
+  if (!password) {
+    setServerStatus("Sunucu parolasını gir.");
+    return;
+  }
+  serverConnectButton.disabled = true;
+  setServerStatus("Sunucuya bağlanılıyor…");
+  try {
+    localStorage.setItem("halimVoiceServerUrl", base);
+    const response = await fetch(base + "/api/login", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({password})
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.detail || "Giriş başarısız.");
+    serverToken = data.token;
+    sessionStorage.setItem("halimVoiceToken", serverToken);
+    $("serverPassword").value = "";
+    await serverFetch("/health");
+    updateServerControls();
+    setServerStatus("Bağlantı kuruldu. Şimdi 5–10 saniyelik WAV örneğini gönderebilirsin.");
+  } catch (error) {
+    setServerStatus("Bağlantı kurulamadı: " + error.message);
+  } finally { serverConnectButton.disabled = false; }
+}
+async function uploadVoiceToServer() {
+  if (!serverToken) { setServerStatus("Önce sunucuya bağlan."); return; }
+  uploadVoiceButton.disabled = true;
+  setServerStatus("Seçtiğin ses örneği şifreli HTTPS bağlantısıyla sunucuya gönderiliyor…");
+  try {
+    const item = await transaction("readonly", store => store.get(serverVoiceSource.value));
+    if (!item || Number(item.duration) < 5 || Number(item.duration) > 10) throw new Error("5–10 saniyelik WAV örneği seç.");
+    const form = new FormData();
+    form.append("file", item.blob, safeFileBase(item.name) + ".wav");
+    const response = await serverFetch("/api/voice", {method:"POST", body:form});
+    const data = await response.json();
+    setServerStatus(data.message || "Ses örneğin sunucuya kaydedildi. Metin yazıp ses üretebilirsin.");
+    synthesizeButton.disabled = false;
+    deleteServerVoiceButton.disabled = false;
+  } catch (error) { setServerStatus("Ses yüklenemedi: " + error.message); }
+  finally { updateServerControls(); }
+}
+async function synthesizeOnServer() {
+  const text = $("serverText").value.trim();
+  if (!text) { setServerStatus("Önce seslendirilecek metni yaz."); return; }
+  if (text.length > 2500) { setServerStatus("Metin en fazla 2.500 karakter olabilir."); return; }
+  synthesizeButton.disabled = true;
+  setServerStatus("Metin senin sesinle oluşturuluyor… İlk üretim biraz sürebilir.");
+  try {
+    const response = await serverFetch("/api/synthesize", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({text, emotion:$("serverEmotion").value || null})
+    });
+    const blob = await response.blob();
+    const url = URL.createObjectURL(blob);
+    const output = $("generatedAudio");
+    output.replaceChildren();
+    const audio = document.createElement("audio");
+    audio.controls = true; audio.src = url; audio.preload = "auto";
+    const download = document.createElement("a");
+    download.className = "button import-button";
+    download.href = url; download.download = "halim-ai-voice.wav";
+    download.textContent = "Oluşan sesi indir";
+    output.append(audio, download);
+    setServerStatus("Ses hazır. Dinleyebilir veya WAV dosyasını indirebilirsin.");
+  } catch (error) { setServerStatus("Ses üretilemedi: " + error.message); }
+  finally { updateServerControls(); }
+}
+async function deleteServerVoice() {
+  if (!confirm("Sunucudaki kişisel ses örneğini silmek istiyor musun?")) return;
+  deleteServerVoiceButton.disabled = true;
+  try {
+    const response = await serverFetch("/api/voice", {method:"DELETE"});
+    const data = await response.json();
+    $("generatedAudio").replaceChildren();
+    setServerStatus(data.message || "Sunucudaki ses örneği silindi.");
+  } catch (error) { setServerStatus("Silme işlemi başarısız: " + error.message); }
+  finally { updateServerControls(); }
+}
+\nrecordButton.addEventListener("click", startRecording);
 stopButton.addEventListener("click", () => { if (recorder && recorder.state !== "inactive") recorder.stop(); });
 $("audioImport").addEventListener("change", event => importAudioFile(event.target.files?.[0]));
 $("sampleSource").addEventListener("change", updateSampleRange);
@@ -377,3 +528,13 @@ $("makeSampleButton").addEventListener("click", makeVoiceSample);
     navigator.serviceWorker.register("./service-worker.js").catch(() => {});
   }
 })();
+if (serverUrlInput) {
+  serverUrlInput.value = localStorage.getItem("halimVoiceServerUrl") || "";
+  serverConnectButton.addEventListener("click", connectVoiceServer);
+  uploadVoiceButton.addEventListener("click", uploadVoiceToServer);
+  synthesizeButton.addEventListener("click", synthesizeOnServer);
+  deleteServerVoiceButton.addEventListener("click", deleteServerVoice);
+  serverVoiceSource.addEventListener("change", updateServerControls);
+  updateServerControls();
+  if (serverToken) setServerStatus("Önceki sekme oturumu bulundu. Sunucuya erişim test ediliyor…");
+}
