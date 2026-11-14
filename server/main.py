@@ -2,7 +2,7 @@ import io, os, secrets, threading, time, wave
 from pathlib import Path
 from typing import Optional
 import numpy as np
-from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, UploadFile, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from itsdangerous import BadSignature, SignatureExpired, URLSafeTimedSerializer
@@ -12,7 +12,7 @@ DATA_DIR = Path(os.getenv("DATA_DIR", "/data"))
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 VOICE_DIR = DATA_DIR / "voice"
 VOICE_DIR.mkdir(parents=True, exist_ok=True)
-VOICE_FILE = VOICE_DIR / "reference_audio"
+VOICE_FILE = VOICE_DIR / "reference_audio.wav"
 MAX_UPLOAD_BYTES = 15 * 1024 * 1024
 MAX_TEXT_CHARS = 2500
 APP_PASSWORD = os.getenv("APP_PASSWORD", "")
@@ -20,14 +20,14 @@ TOKEN_SECRET = os.getenv("TOKEN_SECRET", "")
 CORS_ORIGIN = os.getenv("CORS_ORIGIN", "https://hpirselim-lgtm.github.io")
 TOKEN_MAX_AGE = 12 * 60 * 60
 serializer = URLSafeTimedSerializer(TOKEN_SECRET or "not-configured", salt="halim-ai-voice-session")
-app = FastAPI(title="Halim AI Voice API", version="0.1.0")
+app = FastAPI(title="Halim AI Voice API", version="0.1.0", docs_url=None, redoc_url=None, openapi_url=None)
 app.add_middleware(CORSMiddleware, allow_origins=[CORS_ORIGIN], allow_credentials=False,
                    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
                    allow_headers=["Authorization", "Content-Type"])
 _model = None
 _voice = None
 _model_lock = threading.Lock()
-_generation_lock = threading.Lock()
+_generation_lock = threading.Lock()\n_login_attempts = {}\n_login_lock = threading.Lock()
 
 class LoginBody(BaseModel):
     password: str = Field(min_length=1, max_length=256)
@@ -104,7 +104,7 @@ async def upload_voice(file: UploadFile = File(...), _: bool = Depends(current_u
     content = await file.read(MAX_UPLOAD_BYTES + 1)
     if not content or len(content) > MAX_UPLOAD_BYTES:
         raise HTTPException(status_code=413, detail="Ses dosyası boş veya 15 MB sınırını aşıyor.")
-    temp = VOICE_DIR / "upload.tmp"
+    temp = VOICE_DIR / "upload.tmp.wav"
     try:
         temp.write_bytes(content)
         candidate = get_model().voice_from_file(str(temp))
