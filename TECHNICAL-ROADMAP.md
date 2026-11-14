@@ -9,22 +9,32 @@ Kullanıcının kendi sesinden, yalnızca kendi cihazında çalışan Türkçe k
 - [x] Orijinal ses dosyasını indirme
 - [x] Tarayıcı içinde WAV dönüştürme kodu
 - [x] Kayıt süresi ve arşiv boyutunu gösterme
-- [ ] Gerçek iPhone üzerinde mikrofon, tekrar oynatma, WAV dışa aktarma ve veri kalıcılığı testleri
+- [x] iPhone Dosyalar uygulamasından mevcut ses örneği içe aktarma
+- [ ] Gerçek iPhone üzerinde mikrofon, oynatma, WAV dışa aktarma ve veri kalıcılığı testleri
 
-Not: WAV dönüştürme tarayıcının ses çözme desteğine bağlıdır; her kayıt biçimi ve her iOS sürümünde doğrulanmış sayılmaz.
+Not: WAV dönüştürme tarayıcının ses çözme desteğine bağlıdır; her kayıt biçimi ve iOS sürümünde doğrulanmış sayılmaz.
 
-## Aşama 2 — Türkçe model seçimi
-Model seçimi için zorunlu ölçütler:
-1. Türkçe metni doğal telaffuz etmesi.
-2. Kullanıcının kendi ses örneğinden ses profili oluşturabilmesi.
-3. İnternet olmadan iPhone üzerinde çıkarım yapabilmesi.
-4. Model ve uygulama lisanslarının kullanım amacına uygun olması.
-5. iPhone 14 Pro Max üzerinde bellek, hız ve ısınma testlerini geçmesi.
+## Aşama 2 — Türkçe ses motoru ve kişisel ses
+İki ayrı teknik problem olarak ele alınır:
+1. Türkçe metni doğal konuşmaya dönüştüren temel TTS.
+2. Bu TTS sesini kullanıcının kendi ses karakterine uyarlama (voice cloning / fine-tuning).
 
-### İlk araştırma bulguları
-- PocketTTS + FluidAudio, iOS/Core ML üzerinde yerel çalıştırma için teknik açıdan ilgi çekici. Ancak PocketTTS'nin yayımlanmış dil listesinde Türkçe bulunmuyor; bu nedenle Türkçe ürün motoru olarak şu an seçilmedi.
-- Qwen3-TTS'nin resmî yayımlanmış dil listesinde Türkçe yok. Topluluk tarafından hazırlanmış Türkçe uyarlamalar deneysel ve telaffuz/aksan sınırlamaları bildiriyor; üretim motoru olarak kabul edilmedi.
-- Swift/FluidAudio tabanlı iOS mimarisi, yerel Core ML çalıştırma yönünden incelenmeye değer. Bu, tek başına Türkçe ses klonlama desteğinin hazır olduğu anlamına gelmez.
+### Araştırma bulguları (14 Kasım 2026)
+- EMA Lightning: Türkçe metin normalizasyonu ve TTS için küçük, Apache-2.0 lisanslı bir model. Proje açıklamasında çevrimdışı CPU/GPU çalışması belirtiliyor. Temel Türkçe TTS adayıdır; tek başına kullanıcının sesini klonladığı anlamına gelmez.
+- Elphi Türkçe: EMA Lightning tabanlı Core ML dağıtımı; iPhone/iPad/Mac üzerinde model indirildikten sonra cihazda çevrimdışı seslendirme hedefliyor. Bu, iOS yerel TTS prototipi için önemli bir teknik adaydır; kişisel ses klonlama desteği ayrıca geliştirilmelidir.
+- Okur TTS: Küçük Türkçe model; ONNX, Apple MLX ve tarayıcı/WebAssembly çalıştırma seçenekleri var. Tek sesli modeldir; kullanıcının sesini kopyaladığı doğrulanmış değildir.
+- FreyaTTS-small: Türkçe odaklı, Apache-2.0 model; Core ML/Apple Silicon performans iddiaları var. Ses klonlama/kişiye özel ses adaptasyonu iPhone üzerinde doğrulanmış değil.
+- Ahenk Cep: Küçük cihaz içi Türkçe TTS yaklaşımı; yayımlanan açıklamada öğrenci modelin Ahenk sesini öğrendiği belirtiliyor. Kullanıcının ayrı sesini kolayca kişiselleştirdiği anlamına gelmez.
+- OnDeviceTTS/Kokoro iOS paketi: incelenen dağıtımda hazır sesler İngilizce; Türkçe dil yolu hazır değil.
+
+### Seçim ilkeleri
+1. Türkçe telaffuz ve noktalama başarısı.
+2. Kullanıcının kendi kayıtlarından ses kimliği/konuşmacı uyarlaması.
+3. Tamamen cihaz üzerinde çıkarım.
+4. Model, veri ve kod lisanslarının uygunluğu.
+5. iPhone 14 Pro Max'te bellek, hız, ısınma ve kalite testi.
+
+Henüz kişisel ses klonlaması için doğrulanmış, iPhone üzerinde tamamen çevrimdışı çalışan bir Türkçe model seçilmedi. Önce Türkçe temel TTS'yi Core ML üzerinde test edip, sonra kişisel ses adaptasyonunun mümkün olup olmadığını teknik olarak doğrulayacağız.
 
 ## Aşama 3 — Yerel iOS uygulaması
 PWA kayıt prototipi korunacak. Model yeterliliği doğrulanırsa ayrı bir yerel SwiftUI uygulamasına geçilecek. Bu aşama için Xcode/macOS tabanlı derleme ve gerçek cihaz testi gerekir.
@@ -32,5 +42,5 @@ PWA kayıt prototipi korunacak. Model yeterliliği doğrulanırsa ayrı bir yere
 ## Gizlilik
 - Ses örnekleri GitHub deposuna eklenmez.
 - Ses örnekleri, ses profili ve üretilen dosyalar cihazda tutulur.
-- Model dosyaları yalnızca ilk kurulum/güncelleme sırasında indirilir; üretim sırasında ağ bağlantısı kullanılmaz.
+- Model dosyaları ilk kurulum/güncelleme sırasında indirilebilir; üretim sırasında ağ bağlantısı kullanılmaz.
 - Kullanıcı açıkça izin vermedikçe ses hiçbir harici servise aktarılmaz.
