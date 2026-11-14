@@ -1,23 +1,43 @@
 #!/usr/bin/env python3
 """Localize the upstream Create Voice screen for Halim AI Voice (Turkish)."""
 from pathlib import Path
+
 p = Path("/tmp/chatterbox-coreml/ChatterboxApp/ChatterboxApp/CreateVoiceView.swift")
 s = p.read_text(encoding="utf-8")
-replacements = {
-'''    private static let readAloud = """
-    “Wait… did you hear that?” Mara whispered, her eyes wide.
 
-    A low growl rumbled from the cave — and then, all at once, a tiny dragon \\
-    tumbled out!
+pairs = [
+    ("Read this aloud — with feeling!", "Duygulu bir şekilde sesli oku"),
+    ("Perform it — whisper the whisper, sound excited at the “!”, lift your voice at the “?”. The more expression you give, the more of your voice the clone captures.", "Noktalama işaretlerine dikkat et. Soru cümlelerinde sesini yükselt, heyecanlı bölümleri canlı oku. Doğal ve anlaşılır konuşmaya çalış."),
+    ("Reference audio", "Ses kaydı"),
+    ("Tap Record and read the passage above (about 25–30 seconds), then tap Stop. Or import an existing clip of clear, expressive speech.", "Kaydet düğmesine basıp yukarıdaki metni yaklaşık 25–30 saniyede oku, ardından Durdur'a bas. İstersen anlaşılır ve temiz bir ses kaydını da içe aktarabilirsin."),
+    ("Stop (%.1fs)", "Durdur (%.1fs)"),
+    ("Record", "Kaydet"),
+    ("Re-record", "Yeniden kaydet"),
+    ("Import audio file…", "Ses dosyası seç…"),
+    ("Imported: ", "Seçildi: "),
+    ("Using: ", "Kullanılacak kayıt: "),
+    ("Name", "Ses profili adı"),
+    ("Voice name (e.g. My Voice)", "Örn. Benim Sesim"),
+    ("Please enter a valid name.", "Lütfen geçerli bir ad girin."),
+    ("Cloning voice…", "Ses profili oluşturuluyor…"),
+    ("Done.", "Tamamlandı."),
+    ("Failed: ", "Hata: "),
+    ("Create Voice", "Sesimi Oluştur"),
+    ("Cancel", "İptal"),
+    ("Create", "Oluştur"),
+]
 
-    “Oh! You’re just a baby,” she laughed, scooping him up. “But how on earth \\
-    did you get all the way out here, little one?”
-
-    The dragon sniffed, sneezed a puff of smoke, and curled up in her arms.
-
-    What an extraordinary, unforgettable morning this had turned out to be!
-    """''':
-'''    private static let readAloud = """
+# Replace the sample recording passage with a Turkish text of similar duration.
+start = '    private static let readAloud = """'
+end = '    """'
+a = s.find(start)
+if a < 0:
+    raise SystemExit("Could not find read-aloud passage start")
+b = s.find(end, a + len(start))
+if b < 0:
+    raise SystemExit("Could not find read-aloud passage end")
+b += len(end)
+turkish_passage = '''    private static let readAloud = """
     “Merhaba, beni duyabiliyor musunuz?” diye sordu. Sesi sakindi, fakat içinde tatlı bir heyecan vardı.
 
     Bir an durdu, derin bir nefes aldı ve gülümseyerek devam etti.
@@ -27,28 +47,11 @@ replacements = {
     Sonra şaşkınlıkla ekledi: “Gerçekten ilginç, değil mi?”
 
     Bazen küçük bir deneme, yepyeni bir başlangıca dönüşebilir. İşte bugün benim için böyle bir gün.
-    """''',
-'''Section("Read this aloud — with feeling!")''':'''Section("Duygulu bir şekilde sesli oku")''',
-'''Text("Perform it — whisper the whisper, sound excited at the “!”, lift your voice at the “?”. The more expression you give, the more of your voice the clone captures.")''':'''Text("Noktalama işaretlerine dikkat et. Soru cümlelerinde sesini yükselt, heyecanlı bölümleri canlı oku. Doğal ve anlaşılır konuşmaya çalış.")''',
-'''Section("Reference audio")''':'''Section("Ses kaydı")''',
-'''Text("Tap Record and read the passage above (about 25–30 seconds), then tap Stop. Or import an existing clip of clear, expressive speech.")''':'''Text("Kaydet düğmesine basıp yukarıdaki metni yaklaşık 25–30 saniyede oku, ardından Durdur'a bas. İstersen anlaşılır ve temiz bir ses kaydını da içe aktarabilirsin.")''',
-'''"Stop (%.1fs)"''':'''? "Durdur (%.1fs)"''',
-'''? (recorder.recordedURL == nil ? "Record" : "Re-record")''':'''? (recorder.recordedURL == nil ? "Kaydet" : "Yeniden kaydet")''',
-'''importedURL == nil ? "Import audio file…" : "Imported: \\(importedURL!.lastPathComponent)"''':'''importedURL == nil ? "Ses dosyası seç…" : "Seçildi: \\(importedURL!.lastPathComponent)"''',
-'''Text("Using: \\(src.lastPathComponent)")''':'''Text("Kullanılacak kayıt: \\(src.lastPathComponent)")''',
-'''Section("Name")''':'''Section("Ses profili adı")''',
-'''TextField("Voice name (e.g. My Voice)", text: $name)''':'''TextField("Örn. Benim Sesim", text: $name)''',
-'''Text("Please enter a valid name.")''':'''Text("Lütfen geçerli bir ad girin.")''',
-'''status = "Cloning voice…"''':'''status = "Ses profili oluşturuluyor…"''',
-'''status = "Done."''':'''status = "Tamamlandı."''',
-'''status = "Failed: \\(error.localizedDescription)"''':'''status = "Hata: \\(error.localizedDescription)"''',
-'''.navigationTitle("Create Voice")''':'''.navigationTitle("Sesimi Oluştur")''',
-'''Button("Cancel") { recorder.cancel(); dismiss() }''':'''Button("İptal") { recorder.cancel(); dismiss() }''',
-'''Button("Create") { create() }''':'''Button("Oluştur") { create() }'''
-}
-for old, new in replacements.items():
-    if old not in s:
-        raise SystemExit("Expected exact source fragment not found: " + old[:90].replace("\n"," "))
-    s = s.replace(old, new, 1)
+    """'''
+s = s[:a] + turkish_passage + s[b:]
+
+for old, new in pairs:
+    s = s.replace(old, new)
+
 p.write_text(s, encoding="utf-8")
 print("Localized Create Voice screen and recording passage into Turkish.")
